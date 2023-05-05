@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CSS Flag Project</title>
+    <style>
+      /* set the parent to relative first */
+      .flag {
+        background-color: red;
+        height: 600px;
+        width: 900px;
+        position: relative;
+      }
+
+      .flag > p {
+        color: white;
+      }
+
+      /*only change certain styles for each elements, for ex, dont put margin in other styling if it is not wanted */
+      p {
+        margin: 0px;
+        font-size: 5rem;
+        text-align: center;
+      }
+
+      /* use percents when its easier to do so */
+      .flag > div {
+        background-color: blue;
+        height: 300px;
+        width: 100%;
+        position: absolute;
+        top: 150px;
+      }
+
+      /* use relative after absolute after absolute */
+      /* this is one of way of narrowing down which children elements you want */
+      .flag > div > div {
+        background-color: white;
+        height: 200px;
+        width: 200px;
+        border-radius: 50%;
+        position: relative;
+        top: 50px;
+        left: 350px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="flag">
+      <p>The Flag</p>
+      <div>
+        <div>
+          <p>of Laos</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
