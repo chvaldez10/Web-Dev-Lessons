@@ -16,4 +16,3 @@ def init_django(project_name='cfehome'):
     os.environ['DJANGO_ALLOW_ASYNC_UNSAFE'] = "true"
     import django
     django.setup()
-    
