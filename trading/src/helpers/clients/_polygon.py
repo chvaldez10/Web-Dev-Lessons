@@ -59,9 +59,11 @@ class PolygonAPIClient:
         params = self.get_params()
         encoded_params = urlencode(params)
         url = f"{url}?{encoded_params}"
+        
         if pass_auth:
             api_key = self.get_api_key()
             url += f"&api_key={api_key}"
+        
         return url
 
     def fetch_data(self):
@@ -74,11 +76,15 @@ class PolygonAPIClient:
     def get_stock_data(self):
         data = self.fetch_data()
         results = data.get('results') or None
+        
         if results is None:
             raise Exception(f"Ticker {self.ticker} has no results")
+        
         dataset = []
+        
         for result in results:
             dataset.append(
                 transform_polygon_result(result)
             )
+        
         return dataset
