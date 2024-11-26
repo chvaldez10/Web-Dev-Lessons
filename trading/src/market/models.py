@@ -3,6 +3,8 @@ from django.db import models
 from timescale.db.models.fields import TimescaleDateTimeField
 from timescale.db.models.managers import TimescaleManager
 
+from .tasks import sync_company_stock_quotes
+
 class Company(models.Model):
     name = models.CharField(max_length=120)
     ticker = models.CharField(max_length=20, unique=True, db_index=True)
@@ -10,6 +12,11 @@ class Company(models.Model):
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        self.ticker = f"{self.ticker}".upper()
+        super().save(*args, **kwargs)
+        sync_company_stock_quotes.delay(self.pk)
     
 class StockQuote(models.Model):
     """

@@ -69,6 +69,7 @@ class PolygonAPIClient:
     def fetch_data(self):
         headers = self.get_headers()
         url = self.generate_url()
+        print(f"Fetching data from {url}")
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # not 200/201
         return response.json()
