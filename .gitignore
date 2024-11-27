@@ -13,7 +13,7 @@
 
 # next.js
 /.next/
-/out/
+.out/
 .next/cache
 
 # production
@@ -58,4 +58,24 @@ del_me*
 bin/
 archive/**/*
 !archive/*.*
+
+# Python/Django
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+db.sqlite3
+*.log
+*.pot
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+*.env
+*.venv/
+venv/
+ENV/
+env/
+env.bak/
+*.ipynb_checkpoints/
 .vercel
