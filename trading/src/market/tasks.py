@@ -10,7 +10,7 @@ from .utils import batch_insert_stock_data
     
 
 @shared_task
-def sync_company_stock_quotes(company_id, days_ago=32, date_format="%Y-%m-%d", verbose=False):
+def sync_company_stock_quotes(company_id, date_format="%Y-%m-%d", verbose=False):
     Company = apps.get_model("market", "Company")
     
     try:
@@ -27,9 +27,8 @@ def sync_company_stock_quotes(company_id, days_ago=32, date_format="%Y-%m-%d", v
         raise Exception(f"{company_ticker} invalid")
     
     now = timezone.now()
-    start_date = now - timedelta(days=days_ago)
-    # to_date = start_date + timedelta(days=days_ago + 1)
-    to_date = now - timedelta(days=3)  # 3 days ago
+    start_date = now - timedelta(days=60)  # about 2 months
+    to_date = now - timedelta(days=30)  # about 1 month
     
     from_date = start_date.strftime(date_format)
     to_date = to_date.strftime(date_format)
@@ -50,11 +49,12 @@ def sync_company_stock_quotes(company_id, days_ago=32, date_format="%Y-%m-%d", v
     batch_insert_stock_data(dataset=dataset, company_obj=company_obj, verbose=verbose)
     
 @shared_task
-def sync_stock_data(days_ago=2):
+def sync_stock_data():
     Company = apps.get_model("market", "Company")
     companies = Company.objects.filter(active=True).values_list('id', flat=True)
+    
     for company_id in companies:
-        sync_company_stock_quotes.delay(company_id, days_ago=days_ago)
+        sync_company_stock_quotes.delay(company_id)
 
 @shared_task
 def sync_historical_stock_data(years_ago=5, company_ids=[], use_celery=True, verbose=False):
