@@ -60,9 +60,11 @@ def sync_stock_data():
 def sync_historical_stock_data(years_ago=5, company_ids=[], use_celery=True, verbose=False):
     Company = apps.get_model("market", "Company")
     qs = Company.objects.filter(active=True)
+    
     if len(company_ids) > 0:
         qs = qs.filter(id__in=company_ids)
     companies = qs.values_list('id', flat=True)
+    
     for company_id in companies:
         days_starting_ago = 30 * 12 * years_ago
         batch_size = 30
