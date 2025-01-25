@@ -25,17 +25,18 @@ import { supabaseBrowserClient } from "@/supabase/supabaseClient";
 import { registerWithEmail } from "@/actions/register-with-email";
 
 const AuthPage = () => {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
+  const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const router = useRouter();
 
+  // Check if the user is already authenticated
   useEffect(() => {
     const getCurrUser = async () => {
       const {
         data: { session },
       } = await supabaseBrowserClient.auth.getSession();
 
+      // If the user is authenticated, redirect to the home page
       if (session) {
         return router.push("/");
       }
@@ -45,10 +46,12 @@ const AuthPage = () => {
     setIsMounted(true);
   }, [router]);
 
+  // Define the form schema
   const formSchema = z.object({
     email: z.string().email().min(2, { message: "Email must be 2 characters" }),
   });
 
+  // Initialize the form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,6 +70,7 @@ const AuthPage = () => {
     }
   }
 
+  // Social authentication
   async function socialAuth(provider: Provider) {
     setIsAuthenticating(true);
     await supabaseBrowserClient.auth.signInWithOAuth({
@@ -78,6 +82,7 @@ const AuthPage = () => {
     setIsAuthenticating(false);
   }
 
+  // If the component is not mounted, return null
   if (!isMounted) return null;
 
   return (
