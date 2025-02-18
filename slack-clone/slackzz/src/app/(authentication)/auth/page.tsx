@@ -1,14 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+
+// Third party
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { BsSlack } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { RxGithubLogo } from "react-icons/rx";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { MdOutlineAutoAwesome } from "react-icons/md";
 import { Provider } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { supabaseBrowserClient } from "@/supabase/supabaseClient";
 
+// Components
 import Typography from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,10 +24,9 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { MdOutlineAutoAwesome } from "react-icons/md";
-import { supabaseBrowserClient } from "@/supabase/supabaseClient";
+
+// Actions
 import { registerWithEmail } from "@/actions/register-with-email";
 
 const AuthPage = () => {
@@ -63,7 +68,7 @@ const AuthPage = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsAuthenticating(true);
     const response = await registerWithEmail(values);
-    const { data, error } = JSON.parse(response);
+    const { error } = JSON.parse(response);
     setIsAuthenticating(false);
     if (error) {
       console.warn("Sign in error", error);
