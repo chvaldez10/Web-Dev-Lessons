@@ -10,7 +10,7 @@ create table
     created_at timestamp default current_timestamp,
     is_away boolean default false not null,
     phone text,
-    workplaces text[],
+    workspaces text[],
     channels text[]
   );
 
