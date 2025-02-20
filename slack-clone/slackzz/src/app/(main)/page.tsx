@@ -9,5 +9,11 @@ export default async function Home() {
     return redirect("/auth");
   }
 
+  const workspaceId = userData.workspaces?.[0];
+
+  if (!workspaceId) {
+    return redirect("/create-workspace");
+  }
+
   return <div>Hello {userData.name}</div>;
 }
