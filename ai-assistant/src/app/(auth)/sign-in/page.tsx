@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useGoogleLogin } from "@react-oauth/google";
-import { GetAuthUserData } from "@/services/GlobalAPi";
+import { GetAuthUserData } from "@/services/GlobalAPI";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
