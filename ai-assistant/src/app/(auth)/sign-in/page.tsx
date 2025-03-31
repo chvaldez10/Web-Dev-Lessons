@@ -17,10 +17,13 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { GetAuthUserData } from "@/services/GlobalAPI";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setUser } = useContext(AuthContext);
   // const router = useRouter();
 
   const CreateUser = useMutation(api.users.CreateUser);
@@ -34,7 +37,6 @@ export default function SignIn() {
 
       // Get the user info
       const userInfo = await GetAuthUserData(tokenResponse.access_token);
-      console.log(userInfo);
 
       const result = await CreateUser({
         name: userInfo?.name,
@@ -43,6 +45,7 @@ export default function SignIn() {
       });
 
       console.log(result);
+      setUser(result);
     },
     onError: (errorResponse) => console.log(errorResponse),
   });
