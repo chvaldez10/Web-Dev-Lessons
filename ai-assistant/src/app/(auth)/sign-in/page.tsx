@@ -15,11 +15,15 @@ import {
 } from "@/components/ui/card";
 import { useGoogleLogin } from "@react-oauth/google";
 import { GetAuthUserData } from "@/services/GlobalAPI";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   // const router = useRouter();
+
+  const CreateUser = useMutation(api.users.CreateUser);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -31,6 +35,14 @@ export default function SignIn() {
       // Get the user info
       const userInfo = await GetAuthUserData(tokenResponse.access_token);
       console.log(userInfo);
+
+      const result = await CreateUser({
+        name: userInfo?.name,
+        email: userInfo?.email,
+        picture: userInfo?.picture,
+      });
+
+      console.log(result);
     },
     onError: (errorResponse) => console.log(errorResponse),
   });
