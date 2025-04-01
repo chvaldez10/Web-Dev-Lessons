@@ -19,12 +19,13 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setUser } = useContext(AuthContext);
-  // const router = useRouter();
+  const router = useRouter();
 
   const CreateUser = useMutation(api.users.CreateUser);
 
@@ -46,6 +47,7 @@ export default function SignIn() {
 
       console.log(result);
       setUser(result);
+      router.push("/ai-assistants");
     },
     onError: (errorResponse) => console.log(errorResponse),
   });
