@@ -4,6 +4,7 @@ import React, { useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AuthContext } from "@/context/AuthContext";
+import { FaUserCircle } from "react-icons/fa";
 
 function Header() {
   const { user } = useContext(AuthContext);
@@ -25,11 +26,25 @@ function Header() {
               AI Assistant
             </span>
           </Link>
+
           {/* User Menu */}
           <div className="flex items-center">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition-colors">
-              Get Started
-            </button>
+            <div className="flex items-center space-x-3">
+              {user ? (
+                <Image
+                  src={user.picture || "/avatars/default-avatar.png"}
+                  alt="User profile"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              ) : (
+                <FaUserCircle className="w-8 h-8 text-gray-400" />
+              )}
+              <span className="text-sm font-medium text-gray-700">
+                {user?.name || "Guest"}
+              </span>
+            </div>
           </div>
         </div>
       </div>

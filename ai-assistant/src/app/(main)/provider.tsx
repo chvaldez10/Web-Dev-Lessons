@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import Header from "./_components/Header";
 
 import { GetAuthUserData } from "@/services/GlobalAPI";
 import { useRouter } from "next/navigation";
+import { useConvex } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { AuthContext } from "@/context/AuthContext";
 
 function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
+  const convex = useConvex();
+
+  const { user, setUser } = useContext(AuthContext);
 
   const CheckAuth = async () => {
     const token = localStorage.getItem("user_token");
@@ -17,14 +23,15 @@ function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
       router.push("/sign-in");
     }
 
-    // try {
-    //   const user = await GetAuthUserData(token);
-    //   if (!user) {
-    //     router.push("/login");
-    //   }
-    // } catch (error) {
-    //   router.push("/login");
-    // }
+    try {
+      const result = await convex.query(api.users.GetUser, {
+        email: user?.email,
+      });
+      setUser(result);
+    } catch (error) {
+      console.log(error);
+      router.push("/sign-in");
+    }
   };
 
   useEffect(() => {
