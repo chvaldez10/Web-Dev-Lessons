@@ -1,9 +1,33 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { aiAssistantsList } from "@/services/AiAssistantsList";
+import { Checkbox } from "@/components/ui/checkbox";
+
+export type Assistant = {
+  id: number;
+  name: string;
+  title: string;
+  image: string;
+  instruction: string;
+  userInstruction: string;
+  sampleQuestions: string[];
+};
 
 function AiAssistantsPage() {
+  const [selectedAssistants, setSelectedAssistants] = useState<Assistant[]>([]);
+
+  const toggleAssistant = (assistant: Assistant) => {
+    setSelectedAssistants((prev) =>
+      prev.includes(assistant)
+        ? prev.filter((assistantId) => assistantId !== assistant)
+        : [...prev, assistant]
+    );
+    console.log(`selectedAssistants: ${JSON.stringify(selectedAssistants)}`);
+  };
+
   return (
     <>
       <div className="relative overflow-hidden">
@@ -61,10 +85,20 @@ function AiAssistantsPage() {
                 <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
                   {assistant.instruction}
                 </p>
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm" className="rounded-full">
-                    Try Now
-                  </Button>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`assistant-${assistant.id}`}
+                      checked={selectedAssistants.includes(assistant)}
+                      onCheckedChange={() => toggleAssistant(assistant)}
+                    />
+                    <label
+                      htmlFor={`assistant-${assistant.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Select
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
