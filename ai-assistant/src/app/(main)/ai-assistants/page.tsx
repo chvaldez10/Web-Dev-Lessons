@@ -48,7 +48,11 @@ function AiAssistantsPage() {
               <Button size="lg" variant="outline" className="rounded-full">
                 Learn More
               </Button>
-              <Button size="lg" className="rounded-full">
+              <Button
+                size="lg"
+                className="rounded-full"
+                disabled={selectedAssistants.length === 0}
+              >
                 Continue
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
