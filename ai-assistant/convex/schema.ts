@@ -9,4 +9,13 @@ export default defineSchema({
     credits: v.number(),
     orderId: v.optional(v.string()),
   }),
+  userAIAssistants: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    title: v.string(),
+    image: v.string(),
+    instruction: v.string(),
+    userInstruction: v.string(),
+    sampleQuestions: v.array(v.string()),
+  }),
 });
