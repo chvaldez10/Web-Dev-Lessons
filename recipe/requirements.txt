@@ -1,6 +1,0 @@
-Django
-djangorestframework
-psycopg2
-drf-spectacular
-Pillow
-uwsgi
