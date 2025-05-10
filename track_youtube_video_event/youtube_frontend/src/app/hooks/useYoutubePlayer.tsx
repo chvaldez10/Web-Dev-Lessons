@@ -1,33 +1,73 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 declare global {
   interface Window {
     onYouTubeIframeAPIReady: () => void;
-    YT: {
-      Player: new (
-        elementId: string,
-        options: {
-          height: string;
-          width: string;
-          videoId: string;
-          playerVars: {
-            autoplay: number;
-            controls: number;
-            disablekb: number;
-            fs: number;
-            rel: number;
-          };
-          // Optionally add events if you use them
-        }
-      ) => void;
+    YT: YT;
+  }
+  interface YT {
+    Player: new (
+      elementId: string,
+      options: {
+        height: string;
+        width: string;
+        videoId: string;
+        playerVars: {
+          autoplay: number;
+          controls: number;
+          disablekb: number;
+          fs: number;
+          rel: number;
+        };
+        events: {
+          onReady: (event: PlayerEvent) => void;
+          onStateChange: (event: PlayerEvent) => void;
+        };
+      }
+    ) => YTPlayer;
+    PlayerState: {
+      UNSTARTED: number;
+      ENDED: number;
+      PLAYING: number;
+      PAUSED: number;
+      BUFFERING: number;
+      CUED: number;
+    };
+  }
+
+  interface YTPlayer {
+    getVideoData: () => {
+      video_id: string;
+      author: string;
+      title: string;
+      video_quality: string;
+      video_quality_features: string[];
+    };
+    playVideo: () => void;
+    pauseVideo: () => void;
+    stopVideo: () => void;
+    seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
+    getPlayerState: () => number;
+    getCurrentTime: () => number;
+    getDuration: () => number;
+  }
+
+  interface PlayerEvent {
+    target: {
+      player: YTPlayer;
     };
   }
 }
 
 const useYoutubePlayer = (videoId: string, elementId?: string) => {
   const playerElementId = elementId || "video-player";
+  const playerRef = useRef<YTPlayer | null>(null);
+  const [playerState, setPlayerState] = useState({
+    isReady: false,
+    currentTime: 0,
+  });
 
   useEffect(() => {
     const tag = document.createElement("script");
@@ -47,16 +87,36 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
           fs: 0,
           rel: 0,
         },
-        // events: {
-        //   onReady: (event: YT.PlayerEvent) => {
-        //     console.log(event);
-        //   },
-        // },
+        events: {
+          onReady: handleOnReady,
+          onStateChange: handleOnStateChange,
+        },
       };
 
-      new window.YT.Player(playerElementId, videoOptions);
+      playerRef.current = new window.YT.Player(playerElementId, videoOptions);
     };
-  }, [videoId]);
-  return "";
+  }, [videoId, playerElementId]);
+
+  const handleOnReady = useCallback((event: PlayerEvent) => {
+    setPlayerState({ ...playerState, isReady: true });
+    console.log(event);
+  }, []);
+
+  const handleOnStateChange = useCallback((event: PlayerEvent) => {
+    const YTPlayerStateObj = window.YT.PlayerState;
+    const videoData = playerRef.current?.getVideoData();
+    const currentTime = playerRef.current?.getCurrentTime();
+    console.log(currentTime);
+
+    // Log the video data for debugging
+    if (videoData) {
+      console.log("Video Data:", videoData);
+    }
+
+    console.log("Player Event:", event);
+    console.log("Player State:", YTPlayerStateObj);
+  }, []);
+
+  return playerState;
 };
 export default useYoutubePlayer;
