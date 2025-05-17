@@ -1,64 +1,10 @@
 "use client";
 
+/// <reference path="../../types/youtube.d.ts" />
+
 import { useEffect, useState, useRef, useCallback } from "react";
-
-declare global {
-  interface Window {
-    onYouTubeIframeAPIReady: () => void;
-    YT: YT;
-  }
-  interface YT {
-    Player: new (
-      elementId: string,
-      options: {
-        height: string;
-        width: string;
-        videoId: string;
-        playerVars: {
-          autoplay: number;
-          controls: number;
-          disablekb: number;
-          fs: number;
-          rel: number;
-        };
-        events: {
-          onReady: (event: PlayerEvent) => void;
-          onStateChange: (event: PlayerEvent) => void;
-        };
-      }
-    ) => YTPlayer;
-    PlayerState: {
-      UNSTARTED: number;
-      ENDED: number;
-      PLAYING: number;
-      PAUSED: number;
-      BUFFERING: number;
-      CUED: number;
-    };
-  }
-
-  interface YTPlayer {
-    getVideoData: () => {
-      video_id: string;
-      author: string;
-      title: string;
-      video_quality: string;
-      video_quality_features: string[];
-    };
-    playVideo: () => void;
-    pauseVideo: () => void;
-    stopVideo: () => void;
-    seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
-    getPlayerState: () => number;
-    getCurrentTime: () => number;
-    getDuration: () => number;
-  }
-
-  interface PlayerEvent {
-    target: {
-      player: YTPlayer;
-    };
-  }
+function getKeyByValue(object: Record<string, number>, value: number) {
+  return Object.keys(object).find((key) => object[key] === value);
 }
 
 const useYoutubePlayer = (videoId: string, elementId?: string) => {
@@ -67,6 +13,11 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
   const [playerState, setPlayerState] = useState({
     isReady: false,
     currentTime: 0,
+    videoData: {
+      title: "",
+    },
+    videoStateLabel: "",
+    videoStateValue: -1,
   });
 
   useEffect(() => {
@@ -99,19 +50,35 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
 
   const handleOnReady = useCallback((event: PlayerEvent) => {
     setPlayerState({ ...playerState, isReady: true });
-    console.log(event);
+    handleOnStateChange();
   }, []);
 
-  const handleOnStateChange = useCallback((event: PlayerEvent) => {
+  const handleOnStateChange = useCallback(() => {
     const YTPlayerStateObj = window.YT.PlayerState;
+    const playerInfo = playerRef.current?.playerInfo;
     const videoData = playerRef.current?.getVideoData();
     const currentTime = playerRef.current?.getCurrentTime();
-    console.log(currentTime);
+    const currentStateValue = playerInfo?.playerState;
+    const videoState =
+      currentStateValue !== undefined
+        ? getKeyByValue(YTPlayerStateObj, currentStateValue)
+        : undefined;
+    console.log(`currentTime: ${currentTime}`);
+    console.log(`videoState: ${videoState}`);
+    console.log(`currentStateValue: ${currentStateValue}`);
 
     // Log the video data for debugging
     if (videoData) {
       console.log("Video Data:", videoData);
     }
+
+    setPlayerState((prevState) => ({
+      ...prevState,
+      videoData: videoData || prevState.videoData,
+      currentTime: currentTime ?? prevState.currentTime,
+      videoStateLabel: videoState || prevState.videoStateLabel,
+      videoStateValue: currentStateValue ?? prevState.videoStateValue,
+    }));
 
     console.log("Player Event:", event);
     console.log("Player State:", YTPlayerStateObj);
