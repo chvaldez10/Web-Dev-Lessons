@@ -3,6 +3,15 @@
 /// <reference path="../../types/youtube.d.ts" />
 
 import { useEffect, useState, useRef, useCallback } from "react";
+
+interface PlayerState {
+  is_ready: boolean;
+  current_time: number;
+  video_title: string;
+  video_state_label: string;
+  video_state_value: number;
+}
+
 function getKeyByValue(object: Record<string, number>, value: number) {
   return Object.keys(object).find((key) => object[key] === value);
 }
@@ -10,20 +19,45 @@ function getKeyByValue(object: Record<string, number>, value: number) {
 const useYoutubePlayer = (videoId: string, elementId?: string) => {
   const playerElementId = elementId || "video-player";
   const playerRef = useRef<YTPlayer | null>(null);
-  const [playerState, setPlayerState] = useState({
-    isReady: false,
-    currentTime: 0,
-    videoData: {
-      title: "",
-    },
-    videoStateLabel: "",
-    videoStateValue: -1,
+  const [playerState, setPlayerState] = useState<PlayerState>({
+    is_ready: false,
+    current_time: 0,
+    video_title: "",
+    video_state_label: "",
+    video_state_value: -1,
   });
 
+  const handleOnStateChange = useCallback(() => {
+    const YTPlayerStateObj = window.YT.PlayerState;
+    const playerInfo = playerRef.current?.playerInfo;
+    const videoData = playerRef.current?.getVideoData();
+    const currentTimeSeconds = playerRef.current?.getCurrentTime() ?? 0;
+    const currentStateValue = playerInfo?.playerState ?? -1;
+    const videoStateLabel =
+      currentStateValue !== -1
+        ? getKeyByValue(YTPlayerStateObj, currentStateValue)
+        : undefined;
+
+    setPlayerState((prevState) => ({
+      ...prevState,
+      video_title: videoData?.video_title || "",
+      current_time: currentTimeSeconds,
+      video_state_label: videoStateLabel || "",
+      video_state_value: currentStateValue,
+    }));
+  }, []);
+
+  const handleOnReady = useCallback(() => {
+    setPlayerState((prevState) => ({ ...prevState, isReady: true }));
+    handleOnStateChange();
+  }, [handleOnStateChange]);
+
+  // Load the YouTube IFrame API and embed the player
   useEffect(() => {
     const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName("script")[0];
+
+    tag.src = "https://www.youtube.com/iframe_api";
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
     window.onYouTubeIframeAPIReady = () => {
@@ -46,43 +80,7 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
 
       playerRef.current = new window.YT.Player(playerElementId, videoOptions);
     };
-  }, [videoId, playerElementId]);
-
-  const handleOnReady = useCallback((event: PlayerEvent) => {
-    setPlayerState({ ...playerState, isReady: true });
-    handleOnStateChange();
-  }, []);
-
-  const handleOnStateChange = useCallback(() => {
-    const YTPlayerStateObj = window.YT.PlayerState;
-    const playerInfo = playerRef.current?.playerInfo;
-    const videoData = playerRef.current?.getVideoData();
-    const currentTime = playerRef.current?.getCurrentTime();
-    const currentStateValue = playerInfo?.playerState;
-    const videoState =
-      currentStateValue !== undefined
-        ? getKeyByValue(YTPlayerStateObj, currentStateValue)
-        : undefined;
-    console.log(`currentTime: ${currentTime}`);
-    console.log(`videoState: ${videoState}`);
-    console.log(`currentStateValue: ${currentStateValue}`);
-
-    // Log the video data for debugging
-    if (videoData) {
-      console.log("Video Data:", videoData);
-    }
-
-    setPlayerState((prevState) => ({
-      ...prevState,
-      videoData: videoData || prevState.videoData,
-      currentTime: currentTime ?? prevState.currentTime,
-      videoStateLabel: videoState || prevState.videoStateLabel,
-      videoStateValue: currentStateValue ?? prevState.videoStateValue,
-    }));
-
-    console.log("Player Event:", event);
-    console.log("Player State:", YTPlayerStateObj);
-  }, []);
+  }, [videoId, handleOnReady, handleOnStateChange, playerElementId]);
 
   return playerState;
 };
