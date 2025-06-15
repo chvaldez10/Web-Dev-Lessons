@@ -2,7 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import useYoutubePlayer from "../../hooks/useYoutubePlayer";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
+
+const MOCK_API_ENDPOINT = "http://localhost:8000/api/watch-events";
+
+interface PlayerState {
+  is_ready: boolean;
+  current_time: number;
+  video_title: string;
+  video_state_label: string;
+  video_state_value: number;
+}
 
 const WatchPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -11,7 +21,32 @@ const WatchPage: React.FC = () => {
   const actualStartTime = startTime ? parseInt(startTime) : 0;
   const playerState = useYoutubePlayer(videoId, elementId, actualStartTime);
 
+  const updateBackend = useCallback(
+    async (currentPlayerState: PlayerState) => {
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const response = await fetch(MOCK_API_ENDPOINT, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          ...currentPlayerState,
+          video_id: videoId,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error(`response`, response.json());
+      }
+    },
+    [videoId]
+  );
+
+  console.log(updateBackend);
+
   useEffect(() => {
+    if (!playerState.is_ready) return;
+    if (playerState.video_state_label === "CUED") return;
     console.log(JSON.stringify(playerState, null, 2));
   }, [playerState]);
 
