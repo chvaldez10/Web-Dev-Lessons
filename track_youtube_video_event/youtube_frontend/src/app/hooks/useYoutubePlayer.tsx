@@ -16,7 +16,12 @@ function getKeyByValue(object: Record<string, number>, value: number) {
   return Object.keys(object).find((key) => object[key] === value);
 }
 
-const useYoutubePlayer = (videoId: string, elementId?: string) => {
+const useYoutubePlayer = (
+  videoId: string,
+  elementId?: string,
+  startTime: number = 200,
+  interval: number = 5000
+) => {
   const playerElementId = elementId || "video-player";
   const playerRef = useRef<YTPlayer | null>(null);
   const [playerState, setPlayerState] = useState<PlayerState>({
@@ -24,7 +29,7 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
     current_time: 0,
     video_title: "",
     video_state_label: "",
-    video_state_value: -1,
+    video_state_value: -10,
   });
 
   const handleOnStateChange = useCallback(() => {
@@ -32,23 +37,20 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
     const playerInfo = playerRef.current?.playerInfo;
     const videoData = playerRef.current?.getVideoData();
     const currentTimeSeconds = playerRef.current?.getCurrentTime() ?? 0;
-    const currentStateValue = playerInfo?.playerState ?? -1;
-    const videoStateLabel =
-      currentStateValue !== -1
-        ? getKeyByValue(YTPlayerStateObj, currentStateValue)
-        : undefined;
+    const videoStateValue = playerInfo?.playerState ?? -1;
+    const videoStateLabel = getKeyByValue(YTPlayerStateObj, videoStateValue);
 
     setPlayerState((prevState) => ({
       ...prevState,
       video_title: videoData?.video_title || "",
       current_time: currentTimeSeconds,
       video_state_label: videoStateLabel || "",
-      video_state_value: currentStateValue,
+      video_state_value: videoStateValue,
     }));
   }, []);
 
   const handleOnReady = useCallback(() => {
-    setPlayerState((prevState) => ({ ...prevState, isReady: true }));
+    setPlayerState((prevState) => ({ ...prevState, is_ready: true }));
     handleOnStateChange();
   }, [handleOnStateChange]);
 
@@ -56,7 +58,6 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
   useEffect(() => {
     const tag = document.createElement("script");
     const firstScriptTag = document.getElementsByTagName("script")[0];
-
     tag.src = "https://www.youtube.com/iframe_api";
     firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
 
@@ -66,11 +67,8 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
         width: "640",
         videoId: videoId,
         playerVars: {
-          autoplay: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          rel: 0,
+          playsinline: 1,
+          start: startTime,
         },
         events: {
           onReady: handleOnReady,
@@ -80,7 +78,16 @@ const useYoutubePlayer = (videoId: string, elementId?: string) => {
 
       playerRef.current = new window.YT.Player(playerElementId, videoOptions);
     };
-  }, [videoId, handleOnReady, handleOnStateChange, playerElementId]);
+  }, [videoId, startTime, handleOnReady, handleOnStateChange, playerElementId]);
+
+  useEffect(() => {
+    if (playerRef.current) {
+      const intervalId = setInterval(() => {
+        handleOnStateChange();
+      }, interval);
+      return () => clearInterval(intervalId);
+    }
+  }, [handleOnStateChange, interval]);
 
   return playerState;
 };

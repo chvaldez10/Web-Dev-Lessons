@@ -5,9 +5,11 @@ import useYoutubePlayer from "../hooks/useYoutubePlayer";
 
 const WatchPage: React.FC = () => {
   const searchParams = useSearchParams();
-  const { v: videoId } = Object.fromEntries(searchParams);
+  const { v: videoId, t: startTime } = Object.fromEntries(searchParams);
   const elementId = "video-player";
-  const playerState = useYoutubePlayer(videoId, elementId);
+  const actualStartTime = startTime ? parseInt(startTime) : 0;
+  console.log(`actualStartTime: ${actualStartTime}`);
+  const playerState = useYoutubePlayer(videoId, elementId, actualStartTime);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -20,7 +22,7 @@ const WatchPage: React.FC = () => {
         </div>
       </div>
       <h1 className="mt-4 text-xl font-semibold text-gray-800">
-        Is ready: {playerState.isReady ? "✅ Yes" : "❌ No"}
+        Is ready: {playerState.is_ready ? "✅ Yes" : "❌ No"}
       </h1>
     </div>
   );

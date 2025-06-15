@@ -11,11 +11,8 @@ declare global {
         width: string;
         videoId: string;
         playerVars: {
-          autoplay: number;
-          controls: number;
-          disablekb: number;
-          fs: number;
-          rel: number;
+          playsinline: number;
+          start: number;
         };
         events: {
           onReady: (event: PlayerEvent) => void;
