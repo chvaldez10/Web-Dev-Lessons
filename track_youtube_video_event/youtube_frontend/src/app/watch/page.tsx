@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import useYoutubePlayer from "../../hooks/useYoutubePlayer";
+import { useEffect } from "react";
 
 const WatchPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -9,6 +10,10 @@ const WatchPage: React.FC = () => {
   const elementId = "video-player";
   const actualStartTime = startTime ? parseInt(startTime) : 0;
   const playerState = useYoutubePlayer(videoId, elementId, actualStartTime);
+
+  useEffect(() => {
+    console.log(JSON.stringify(playerState, null, 2));
+  }, [playerState]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">

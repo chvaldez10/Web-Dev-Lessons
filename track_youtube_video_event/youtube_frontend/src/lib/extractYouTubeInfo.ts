@@ -1,3 +1,8 @@
+/**
+ * Extracts the video ID and time from a YouTube URL
+ * @param url - The YouTube URL to extract the video ID and time from
+ * @returns An object with the video ID and time
+ */
 export default function extractYouTubeInfo(url: string) {
   // Extract video ID
   const videoIdMatch = url.match(/[?&]v=([^&]+)/);

@@ -34,7 +34,7 @@ declare global {
     getVideoData: () => {
       video_id: string;
       author: string;
-      video_title: string;
+      title: string;
       video_quality: string;
       video_quality_features: string[];
     };

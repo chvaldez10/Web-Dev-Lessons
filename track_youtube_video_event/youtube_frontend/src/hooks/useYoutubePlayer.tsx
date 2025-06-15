@@ -20,7 +20,7 @@ const useYoutubePlayer = (
   videoId: string,
   elementId?: string,
   startTime: number = 200,
-  interval: number = 5000
+  interval: number = 1000
 ) => {
   const playerElementId = elementId || "video-player";
   const playerRef = useRef<YTPlayer | null>(null);
@@ -42,7 +42,7 @@ const useYoutubePlayer = (
 
     setPlayerState((prevState) => ({
       ...prevState,
-      video_title: videoData?.video_title || "",
+      video_title: videoData?.title || "",
       current_time: currentTimeSeconds,
       video_state_label: videoStateLabel || "",
       video_state_value: videoStateValue,

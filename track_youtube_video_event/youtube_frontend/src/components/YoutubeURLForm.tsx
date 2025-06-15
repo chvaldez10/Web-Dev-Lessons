@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 
 export default function YouTubeUrlForm() {
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState<string>("");
   const [videoData, setVideoData] = useState({
     videoId: "",
     time: "",
