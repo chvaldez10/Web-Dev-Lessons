@@ -1,14 +1,13 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import useYoutubePlayer from "../hooks/useYoutubePlayer";
+import useYoutubePlayer from "../../hooks/useYoutubePlayer";
 
 const WatchPage: React.FC = () => {
   const searchParams = useSearchParams();
   const { v: videoId, t: startTime } = Object.fromEntries(searchParams);
   const elementId = "video-player";
   const actualStartTime = startTime ? parseInt(startTime) : 0;
-  console.log(`actualStartTime: ${actualStartTime}`);
   const playerState = useYoutubePlayer(videoId, elementId, actualStartTime);
 
   return (
