@@ -1,10 +1,11 @@
 "use client";
 
 import extractYouTubeInfo from "@/lib/extractYouTubeInfo";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function YouTubeUrlForm() {
+  const router = useRouter();
   const [url, setUrl] = useState<string>("");
   const [videoData, setVideoData] = useState({
     videoId: "",
@@ -16,7 +17,7 @@ export default function YouTubeUrlForm() {
     if (!videoData.videoId) {
       alert("Please enter a valid YouTube URL");
     } else {
-      redirect(`/watch?v=${videoData.videoId}&t=${videoData.time}`);
+      router.push(`/watch?v=${videoData.videoId}&t=${videoData.time}`);
     }
   };
 

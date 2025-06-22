@@ -33,6 +33,9 @@ const useYoutubePlayer = (
   });
 
   const handleOnStateChange = useCallback(() => {
+    // Only run on client side
+    if (typeof window === "undefined" || !window.YT) return;
+
     const YTPlayerStateObj = window.YT.PlayerState;
     const playerInfo = playerRef.current?.playerInfo;
     const videoData = playerRef.current?.getVideoData();
