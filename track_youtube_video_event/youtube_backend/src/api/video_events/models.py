@@ -11,6 +11,7 @@ class YouTubeVideoWatchEvent(SQLModel, table=True):
     video_state_value: int
 
 class YouTubePlayerState(SQLModel, table=True):
+    id: int = Field(primary_key=True)
     is_ready: bool
     video_id: str = Field(index=True)
     video_title: str
