@@ -16,10 +16,10 @@ interface PlayerState {
 
 const WatchPage: React.FC = () => {
   const searchParams = useSearchParams();
-  const { v: videoId, t: startTime } = Object.fromEntries(searchParams);
+  const { v: video_id, t: start_time } = Object.fromEntries(searchParams);
   const elementId = "video-player";
-  const actualStartTime = startTime ? parseInt(startTime) : 0;
-  const playerState = useYoutubePlayer(videoId, elementId, actualStartTime);
+  const actualStartTime = start_time ? parseInt(start_time) : 0;
+  const playerState = useYoutubePlayer(video_id, elementId, actualStartTime);
 
   const updateBackend = useCallback(
     async (currentPlayerState: PlayerState) => {
@@ -29,10 +29,7 @@ const WatchPage: React.FC = () => {
 
       const backendData = {
         ...currentPlayerState,
-        video_id: videoId,
-        video_data: {
-          title: currentPlayerState.video_title,
-        },
+        video_id: video_id,
       };
 
       const response = await fetch(FAST_API_ENDPOINT, {
@@ -47,7 +44,7 @@ const WatchPage: React.FC = () => {
         console.log(`something went wrong. response:`, response);
       }
     },
-    [videoId]
+    [video_id]
   );
 
   useEffect(() => {
