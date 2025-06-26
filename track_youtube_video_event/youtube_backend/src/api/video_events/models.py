@@ -12,7 +12,6 @@ class YouTubeVideoWatchEvent(TimescaleModel, table=True):
     video_state_label: str
     video_state_value: int
     referer: Optional[str] = Field(default="", index=True)
-    time: datetime
     
     # timescaledb config
     __chunk_time_interval__ = "INTERVAL 7 days"

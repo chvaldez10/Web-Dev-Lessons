@@ -1,22 +1,23 @@
 import os
 import sqlmodel
-from sqlmodel import SQLModel, Session
 import timescaledb
+from sqlmodel import SQLModel, Session
 from timescaledb import create_engine
 
-# Import models to ensure they are registered with SQLModel
-from api.video_events.models import YouTubeVideoWatchEvent, YouTubePlayerState
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is not set")
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL == "":
+    raise NotImplementedError("DATABASE_URL needs to be set")
 
-engine = sqlmodel.create_engine(DATABASE_URL, timezone="UTC")
+engine = create_engine(DATABASE_URL)
 
 def init_db():
+    # create database times
+    # print("creating db")
     SQLModel.metadata.create_all(engine)
     timescaledb.metadata.create_all(engine)
 
 def get_session():
+    # use within routes or api endpoints
     with Session(engine) as session:
         yield session
