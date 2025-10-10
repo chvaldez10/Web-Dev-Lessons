@@ -57,8 +57,7 @@ package-lock.json
 # Personal file
 del_me*
 bin/
-archive/**/*
-!archive/*.*
+archive
 
 # Python/Django
 *.pyc
