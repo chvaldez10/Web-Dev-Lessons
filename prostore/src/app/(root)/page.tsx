@@ -1,12 +1,12 @@
-import { sampleData } from "@/db/sample-data";
 import ProductList from "@/components/shared/product/ProductList";
-
+import { getLatestProducts } from "@/lib/actions/product.actions";
 const Homepage = async () => {
-  console.log(sampleData);
+  const latestProducts = await getLatestProducts();
+  console.log(latestProducts);
   return (
     <div>
       <h1>home page</h1>
-      <ProductList data={sampleData.products} />
+      <ProductList data={latestProducts} />
     </div>
   );
 };
