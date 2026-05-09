@@ -1,7 +1,7 @@
 import type { Habit } from "@src/types/Habit";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@src/components/Button";
-import { format, isFuture, isSameDay } from "date-fns";
+import { format, isFuture, isSameDay, subDays } from "date-fns";
 import { useHabits } from "@src/context/useHabits";
 
 type HabitItemProps = {
@@ -12,6 +12,8 @@ type HabitItemProps = {
 export function HabitItem({ habit, visibleDates }: HabitItemProps) {
   const today = new Date();
   const { deleteHabit, toggleHabitCompletion } = useHabits();
+
+  const streak = getStreak(habit.completions);
 
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none">
@@ -24,7 +26,11 @@ export function HabitItem({ habit, visibleDates }: HabitItemProps) {
             className="shrink-0 text-sm text-amber-600 dark:text-amber-400"
             aria-hidden
           >
-            🔥
+            {streak !== 0 && (
+              <span className="text-amber-600 dark:text-amber-400">
+                🔥{streak}
+              </span>
+            )}
           </span>
         </div>
         <Button
@@ -72,4 +78,16 @@ export function HabitItem({ habit, visibleDates }: HabitItemProps) {
       </div>
     </div>
   );
+}
+
+function getStreak(completions: Date[]) {
+  let streak = 0;
+  let date = new Date();
+
+  // check todays completion and decrement the date until the completion is not found
+  while (completions.some((completion) => isSameDay(completion, date))) {
+    streak++;
+    date = subDays(date, 1);
+  }
+  return streak;
 }

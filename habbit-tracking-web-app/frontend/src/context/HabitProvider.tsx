@@ -12,7 +12,6 @@ export function HabitProvider({ children }: HabitProviderProps) {
   const [habits, setHabits] = useLocalStorage<Habit[]>("Habits", []);
 
   function addHabit(name: string) {
-    // Functional update avoids stale closures if multiple adds batch together.
     setHabits((currentHabits) => [
       ...currentHabits,
       { id: crypto.randomUUID(), name, completions: [] },
@@ -28,15 +27,17 @@ export function HabitProvider({ children }: HabitProviderProps) {
   function toggleHabitCompletion(id: string, date: Date) {
     setHabits((currentHabits) =>
       currentHabits.map((habit) => {
+        // if the habit id is not the same as the id passed in, return the habit
         if (habit.id !== id) {
           return habit;
         }
 
-        // Same calendar day counts as one completion, regardless of clock time.
+        // check if the date is already in the completions array
         const alreadyCompleted = habit.completions.some((completedDate) =>
           isSameDay(completedDate, date),
         );
 
+        // if the date is already in the completions array, remove it from the array, otherwise add it to the array
         const completions = alreadyCompleted
           ? habit.completions.filter(
               (completedDate) => !isSameDay(completedDate, date),
