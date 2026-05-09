@@ -46,29 +46,43 @@ export function HabitItem({ habit, visibleDates }: HabitItemProps) {
           const isToday = isSameDay(date, today);
           const future = isFuture(date) && !isSameDay(date, today);
           const isDisabled = future;
+          const isCompleted = habit.completions.some((c) =>
+            isSameDay(c, date),
+          );
 
           return (
             <button
               key={date.toISOString()}
               type="button"
               disabled={isDisabled}
+              aria-pressed={isCompleted}
               className={twMerge(
                 "flex min-w-0 flex-1 cursor-pointer flex-col items-center gap-0.5 rounded-md border px-1 py-2 text-[0.6875rem] leading-tight transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-zinc-900",
                 "disabled:cursor-not-allowed disabled:opacity-40",
-                isToday
-                  ? "border-violet-500 bg-violet-100 text-violet-900 hover:bg-violet-100 dark:border-violet-400 dark:bg-violet-950/70 dark:text-violet-100 dark:hover:bg-violet-950/80"
-                  : "border-zinc-200/90 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700",
+                isCompleted &&
+                  "border-emerald-500 bg-emerald-100 text-emerald-900 hover:bg-emerald-200 dark:border-emerald-500 dark:bg-emerald-950/80 dark:text-emerald-100 dark:hover:bg-emerald-900/80",
+                !isCompleted &&
+                  isToday &&
+                  "border-violet-500 bg-violet-100 text-violet-900 hover:bg-violet-100 dark:border-violet-400 dark:bg-violet-950/70 dark:text-violet-100 dark:hover:bg-violet-950/80",
+                !isCompleted &&
+                  !isToday &&
+                  "border-zinc-200/90 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700",
               )}
               onClick={() => toggleHabitCompletion(habit.id, date)}
             >
               <span className="font-medium">{format(date, "EEE")}</span>
               <span
-                className={
-                  isToday
-                    ? "text-violet-700 dark:text-violet-200"
-                    : "text-zinc-500 dark:text-zinc-400"
-                }
+                className={twMerge(
+                  isCompleted &&
+                    "text-emerald-800 dark:text-emerald-200",
+                  !isCompleted &&
+                    isToday &&
+                    "text-violet-700 dark:text-violet-200",
+                  !isCompleted &&
+                    !isToday &&
+                    "text-zinc-500 dark:text-zinc-400",
+                )}
               >
                 {format(date, "d")}
               </span>
