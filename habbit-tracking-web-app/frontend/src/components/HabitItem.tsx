@@ -1,26 +1,17 @@
 import type { Habit } from "@src/types/Habit";
 import { twMerge } from "tailwind-merge";
 import { Button } from "@src/components/Button";
-import {
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  format,
-  isFuture,
-  isSameDay,
-} from "date-fns";
+import { format, isFuture, isSameDay } from "date-fns";
+import { useHabits } from "@src/context/useHabits";
 
 type HabitItemProps = {
   habit: Habit;
-  onDeleteHabit: (id: string) => void;
+  visibleDates: Date[];
 };
 
-export function HabitItem({ habit, onDeleteHabit }: HabitItemProps) {
+export function HabitItem({ habit, visibleDates }: HabitItemProps) {
   const today = new Date();
-  const visibleDates = eachDayOfInterval({
-    start: startOfWeek(today),
-    end: endOfWeek(today),
-  });
+  const { deleteHabit, toggleHabitCompletion } = useHabits();
 
   return (
     <div className="flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none">
@@ -39,7 +30,7 @@ export function HabitItem({ habit, onDeleteHabit }: HabitItemProps) {
         <Button
           variant="ghost-destructive"
           className="shrink-0 text-sm"
-          onClick={() => onDeleteHabit(habit.id)}
+          onClick={() => deleteHabit(habit.id)}
         >
           Delete
         </Button>
@@ -63,6 +54,7 @@ export function HabitItem({ habit, onDeleteHabit }: HabitItemProps) {
                   ? "border-violet-500 bg-violet-100 text-violet-900 hover:bg-violet-100 dark:border-violet-400 dark:bg-violet-950/70 dark:text-violet-100 dark:hover:bg-violet-950/80"
                   : "border-zinc-200/90 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:border-zinc-600 dark:hover:bg-zinc-700",
               )}
+              onClick={() => toggleHabitCompletion(habit.id, date)}
             >
               <span className="font-medium">{format(date, "EEE")}</span>
               <span

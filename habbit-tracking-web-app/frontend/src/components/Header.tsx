@@ -1,10 +1,32 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@src/components/Button";
+import { useHabits } from "@src/context/useHabits";
+import { isSameDay, format } from "date-fns";
 
 const navButtonClass =
   "inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium";
 
-export function Header() {
+type HeaderProps = {
+  visibleDates: Date[];
+  onPreviousWeek: () => void;
+  onNextWeek: () => void;
+};
+
+export function Header({
+  visibleDates,
+  onPreviousWeek,
+  onNextWeek,
+}: HeaderProps) {
+  const { habits } = useHabits();
+
+  const doneToday = habits.filter((habit) =>
+    habit.completions.some((completion) =>
+      isSameDay(completion, visibleDates[0]),
+    ),
+  ).length;
+
+  const dateRange = `${format(visibleDates[0], "MMMM d")} – ${format(visibleDates[visibleDates.length - 1], "MMMM d")}`;
+
   return (
     <header className="border-b border-zinc-200 pb-6 dark:border-zinc-800">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
@@ -13,7 +35,7 @@ export function Header() {
             Habbit Tracker
           </h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            1/1 done today
+            {doneToday}/{habits.length} done today
           </p>
         </div>
 
@@ -23,7 +45,7 @@ export function Header() {
               This week
             </p>
             <p className="mt-0.5 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              April 6 – April 12
+              {dateRange}
             </p>
           </div>
           <nav
@@ -34,6 +56,7 @@ export function Header() {
               variant="secondary"
               type="button"
               className={navButtonClass}
+              onClick={onPreviousWeek}
             >
               <ChevronLeftIcon className="h-4 w-4 shrink-0" aria-hidden />
               Previous
@@ -42,6 +65,7 @@ export function Header() {
               variant="secondary"
               type="button"
               className={navButtonClass}
+              onClick={onNextWeek}
             >
               Next
               <ChevronRightIcon className="h-4 w-4 shrink-0" aria-hidden />

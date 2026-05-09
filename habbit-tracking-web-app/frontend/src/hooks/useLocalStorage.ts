@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { parseISO } from "date-fns";
 
-/** Syncs state with localStorage; survives refresh. Not safe for secrets. */
+/** Syncs state with localStorage; survives refresh.*/
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [value, setValue] = useState<T>(() =>
     readStorageValue(key, initialValue),

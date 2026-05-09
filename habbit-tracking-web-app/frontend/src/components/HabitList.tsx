@@ -1,12 +1,14 @@
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { HabitItem } from "@src/components/HabitItem";
-import type { Habit } from "@src/types/Habit";
+import { useHabits } from "@src/context/useHabits";
 
 type HabitListProps = {
-  habits: Habit[];
+  visibleDates: Date[];
 };
 
-export function HabitList({ habits }: HabitListProps) {
+export function HabitList({ visibleDates }: HabitListProps) {
+  const { habits } = useHabits();
+
   if (habits.length === 0) {
     return (
       <div
@@ -30,7 +32,7 @@ export function HabitList({ habits }: HabitListProps) {
   return (
     <div className="flex flex-col gap-2">
       {habits.map((habit) => (
-        <HabitItem key={habit.id} habit={habit} />
+        <HabitItem key={habit.id} habit={habit} visibleDates={visibleDates} />
       ))}
     </div>
   );
