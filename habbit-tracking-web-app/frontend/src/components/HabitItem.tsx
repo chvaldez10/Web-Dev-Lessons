@@ -10,7 +10,12 @@ import {
   isSameDay,
 } from "date-fns";
 
-export function HabitItem({ habit }: { habit: Habit }) {
+type HabitItemProps = {
+  habit: Habit;
+  onDeleteHabit: (id: string) => void;
+};
+
+export function HabitItem({ habit, onDeleteHabit }: HabitItemProps) {
   const today = new Date();
   const visibleDates = eachDayOfInterval({
     start: startOfWeek(today),
@@ -31,7 +36,11 @@ export function HabitItem({ habit }: { habit: Habit }) {
             🔥
           </span>
         </div>
-        <Button variant="ghost-destructive" className="shrink-0 text-sm">
+        <Button
+          variant="ghost-destructive"
+          className="shrink-0 text-sm"
+          onClick={() => onDeleteHabit(habit.id)}
+        >
           Delete
         </Button>
       </div>

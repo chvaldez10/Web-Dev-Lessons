@@ -1,10 +1,12 @@
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
 import { HabitItem } from "@src/components/HabitItem";
-import { mockHabits } from "@src/data/mockHabits";
+import type { Habit } from "@src/types/Habit";
 
-export function HabitList() {
-  const habits = mockHabits;
+type HabitListProps = {
+  habits: Habit[];
+};
 
+export function HabitList({ habits }: HabitListProps) {
   if (habits.length === 0) {
     return (
       <div

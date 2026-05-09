@@ -1,7 +1,4 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Button } from "@src/components/Button";
 
 const navButtonClass =
@@ -33,11 +30,19 @@ export function Header() {
             className="flex items-center justify-start gap-2 sm:justify-end"
             aria-label="Week navigation"
           >
-            <Button variant="secondary" type="button" className={navButtonClass}>
+            <Button
+              variant="secondary"
+              type="button"
+              className={navButtonClass}
+            >
               <ChevronLeftIcon className="h-4 w-4 shrink-0" aria-hidden />
               Previous
             </Button>
-            <Button variant="secondary" type="button" className={navButtonClass}>
+            <Button
+              variant="secondary"
+              type="button"
+              className={navButtonClass}
+            >
               Next
               <ChevronRightIcon className="h-4 w-4 shrink-0" aria-hidden />
             </Button>
