@@ -1,7 +1,7 @@
-import { ThemeToggle } from "./components/ThemeToggle";
-import { Header } from "./components/Header";
-import { HabitForm } from "./components/HabitForm";
-import { HabitList } from "./components/HabitList";
+import { ThemeToggle } from "@src/components/ThemeToggle";
+import { Header } from "@src/components/Header";
+import { HabitForm } from "@src/components/HabitForm";
+import { HabitList } from "@src/components/HabitList";
 
 export default function App() {
   return (

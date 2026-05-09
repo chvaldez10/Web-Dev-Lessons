@@ -2,7 +2,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { Button } from "./Button";
+import { Button } from "@src/components/Button";
 
 const navButtonClass =
   "inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium";

@@ -1,18 +1,9 @@
 import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
-
-type Habit = {
-  id: string;
-  name: string;
-};
-
-const MOCK_HABITS: Habit[] = [
-  { id: "1", name: "Morning walk" },
-  { id: "2", name: "Read for 20 minutes" },
-  { id: "3", name: "Drink water" },
-];
+import { HabitItem } from "@src/components/HabitItem";
+import { mockHabits } from "@src/data/mockHabits";
 
 export function HabitList() {
-  const habits = MOCK_HABITS;
+  const habits = mockHabits;
 
   if (habits.length === 0) {
     return (
@@ -36,11 +27,9 @@ export function HabitList() {
 
   return (
     <div className="flex flex-col gap-2">
-      <ul>
-        {habits.map((habit) => (
-          <li key={habit.id}>{habit.name}</li>
-        ))}
-      </ul>
+      {habits.map((habit) => (
+        <HabitItem key={habit.id} habit={habit} />
+      ))}
     </div>
   );
 }
