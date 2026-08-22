@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+
 import Navbar from "@/components/Navbar";
+import { ConvexClientProvider } from "@/components/convex-client-provider";
 
 const inter = Inter({
   display: "swap",
@@ -30,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${inter.className} min-h-[calc(100vh-2rem)] flex flex-col gap-4 antialiased`}
       >
-        <Navbar />
-        <main className="px-2 md:px-4 grow flex flex-col">{children}</main>
+        <ConvexClientProvider>
+          <Navbar />
+          <main className="px-2 md:px-4 grow flex flex-col">{children}</main>
+        </ConvexClientProvider>
       </body>
     </html>
   );
